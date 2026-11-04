@@ -13,6 +13,7 @@ A080839(n) counts the positive, strictly increasing integer sequences of length 
 | a(p+q−1) ≥ a(p)·a(q) | proved |
 | a(n) ≥ 2^(F(n)), with F(n) computed exactly by an algorithm proved correct | proved; family verified by brute force |
 | F(n) ≈ 0.9·n^(3/2)/ln n, so log a(n) grows faster than linearly | proved for each computed n (up to n = 25600); open as a statement for all n |
+| improved family: F₁(n) of order n^(5/3) up to a log factor (a(25600) ≥ 2^936284) | proved for each computed n; open for all n |
 | a(n) = c^(n²/2 + o(n²)) with c ≈ 1.45 ± 0.01 | conjecture, supported by numerical evidence |
 
 ## 1. Setting
@@ -99,6 +100,17 @@ For example, a(25600) ≥ 2^358983. F(n) grows like about 0.9·n^(3/2)/ln n. The
 
 **Heuristic explanation.** Row j grows polynomially, roughly like 2·C(u, j). The relative error of the certified bounds builds up across rows to about j²/u. The validity condition needs that error to stay below a constant. This gives free blocks for u ≳ C·j²·(log factor), and therefore n^(3/2) up to logarithms.
 
+**Improvement with nested compensation (k = 1).** Group the blocks of each band row in pairs. In a free group the second block takes the opposite η of the first, a Thue–Morse pattern of depth 1. The net error of the group then involves only values three rows down, so the relative error per row drops from about j/u to about (j/u)². The certified band grows like about 0.7·n^(2/3) rows, and the bound improves accordingly (`lowerbound_k1b.py`, verified with `verify_k1b.py` on bands with up to 27 active rows; no invalid configurations):
+
+| n | F₁(n) | F(n) for k = 0 |
+|---|---|---|
+| 1600 | 12121 | 7409 |
+| 6400 | 109264 | 53150 |
+| 12800 | 321698 | 139064 |
+| 25600 | 936284 | 358983 |
+
+Here F₁(n) grows like n^(5/3) up to a logarithmic factor. The heuristic for depth-k compensation predicts n^(2 − 1/(k+2)). With our current certified bound for the group error, however, the gain stops at k = 2, that is n^(7/4), because the residual noise from the free pairs is not cancelled.
+
 **Open.** We have not proved that F(n) ≥ c·n^(3/2)/log n for all n; this would need an analytic treatment of the error recursion. Closing the gap to the conjectured quadratic exponent would need a family in which errors do not accumulate across rows. Our attempts at that point to a coupled dynamical system: after normalizing each diagonal entry by 2^level, the rule becomes an average, ε' = (ε ± ε')/2. Two simpler approaches fail for clear reasons:
 - finite-state truncations have zero entropy;
 - worst-case row-by-row bounds give only n·log n.
@@ -108,6 +120,7 @@ For example, a(25600) ≥ 2^358983. F(n) grows like about 0.9·n^(3/2)/ln n. The
 | file | description |
 |---|---|
 | `lowerbound.py` | certified lower-bound algorithm (the theorem in Section 4) |
+| `lowerbound_k1b.py`, `verify_k1b.py` | improved certified family with nested compensation, and its verification |
 | `verify_family.py`, `verify_family2.py` | exhaustive and random verification of the family |
 | `smc2.cpp` | sequential Monte Carlo estimator of ln a(n) |
 | `stats.cpp` | full enumeration with free-cell statistics |

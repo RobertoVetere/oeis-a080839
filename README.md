@@ -81,6 +81,10 @@ python3 brute_force.py 9       # direct count from the definition
 
 The C++ program supports n ≤ 14, the limit of its 64-bit state packing.
 
+## Further results
+
+See [NOTES_growth.md](NOTES_growth.md) for results on the growth of a(n): a proved gluing inequality, a certified explicit family giving a(n) >= 2^F(n) with F(n) ~ 0.9 n^(3/2)/ln n, and a numerical estimate of the growth constant (c ~ 1.45).
+
 ## Files
 
 | file | description |
@@ -88,6 +92,7 @@ The C++ program supports n ≤ 14, the limit of its 64-bit state packing.
 | `a080839.cpp` | fast C++ program used for a(14) |
 | `a080839_reference.py` | short Python version of the same method |
 | `brute_force.py` | brute-force count from the definition, for verification |
+| `NOTES_growth.md` and its scripts | growth results (see above) |
 
 ## Credits and citation
 

@@ -153,6 +153,15 @@ Here σ = − is only possible at descents (r ≤ 1). Consequences, proved:
 
 **Open (the missing step).** Prove that descents are created at a rate matching their losses, so that the density stays above some δ > 0 at every level. Since the descent density equals the free-cell density, this would prove a(n) ≥ 2^(δn²/2) and settle the quadratic growth order. The natural tools are a potential function or a comparison with a supercritical branching process. The obstacle is that frozen ascending regions (uv > 1 with r > 1) are stable, so creation has to come from deep descents spreading into their neighbours.
 
+**Further findings on the missing step.**
+- *No local potential.* A linear-programming search for Φ = Σ φ(r_g), with E[Φ'] ≥ Φ up to telescoping terms, has only the solution φ = 0 (`potential_lp.py`). The reason is structural. Geometric increasing configurations (all r_g = 1 + ε) are absorbing states: they reproduce themselves with no free cells, so no local potential can separate active regions from regions that are about to freeze. This is an absorbing-state transition, of the same kind as directed percolation.
+- *The active phase invades.* Simulations of the level automaton with periodic boundary and length 4000 (`pca.cpp`):
+  - from a random start, the descent density stays at about 0.42 for 4000 levels;
+  - from a half-frozen start, the density in the frozen half rises from 0 to 0.17 over 4000 levels, so activity spreads into frozen regions.
+- *No static gadgets.* No periodic pattern of fixed rules (forced "+", forced "−", coin) with period up to 7 keeps the coin cells free under independent coins (`gadget.py`, `gadget_sim2.cpp`). Patterns with the same coin in every period survive, through an exact conservation of the period product, but they carry only one bit per level. In log scale each coin leaves a dipole in the log-ratio field, which drifts to the right and accumulates like a random walk.
+
+**Suggested route.** A block (renormalization) comparison with oriented percolation, which is the standard technique for proving survival in absorbing-state systems, or an adaptive controller. Information in the automaton flows only to the right, at speed 1, which suits the oriented setting.
+
 ## Files
 
 | file | description |
@@ -165,3 +174,4 @@ Here σ = − is only possible at descents (r ≤ 1). Consequences, proved:
 | `lowerbound_tm.py` | certified family with Thue–Morse compensation of depth k |
 | `randproc.cpp`, `levels.cpp`, `implic.cpp` | fair-coin process: E[F_n], density per level, local implications (Section 5) |
 | `childratio.cpp` | test of the (false) local inequality for extension counts |
+| `potential_lp.py`, `pca.cpp`, `gadget.py`, `gadget_sim2.cpp` | potential search, invasion simulations, static-gadget search (Section 5) |

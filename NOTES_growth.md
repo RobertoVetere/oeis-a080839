@@ -14,6 +14,8 @@ A080839(n) counts the positive, strictly increasing integer sequences of length 
 | a(n) ≥ 2^(F(n)), with F(n) computed exactly by an algorithm proved correct | proved; family verified by brute force |
 | F(n) ≈ 0.9·n^(3/2)/ln n, so log a(n) grows faster than linearly | proved for each computed n (up to n = 25600); open as a statement for all n |
 | improved family: F₁(n) of order n^(5/3) up to a log factor (a(25600) ≥ 2^936284) | proved for each computed n; open for all n |
+| log₂ a(n) ≥ E[F_n] for the fair-coin process (entropy reduction) | proved |
+| density of free cells in that process stays at about 0.43, which would give quadratic growth with c ≥ 1.34 | proved reduction; persistence observed numerically, not proved |
 | a(n) = c^(n²/2 + o(n²)) with c ≈ 1.45 ± 0.01 | conjecture, supported by numerical evidence |
 
 ## 1. Setting
@@ -115,6 +117,42 @@ Here F₁(n) grows like n^(5/3) up to a logarithmic factor. The heuristic for de
 - finite-state truncations have zero entropy;
 - worst-case row-by-row bounds give only n·log n.
 
+## 5. A route to the quadratic bound: reduction to a random process
+
+**Theorem (entropy reduction).** Build a triangle by visiting the cells in order and, at every free cell (both signs valid and distinct), choosing the sign with a fair coin. Let F_n be the number of free cells met. Then
+
+log₂ a(n) ≥ E[F_n].
+
+*Proof.* Let Q be the law of the resulting configuration. It is supported on valid configurations, so a(n) ≥ |supp Q| = E_Q[1/Q] ≥ 2^(E_Q[log₂(1/Q)]) = 2^(H(Q)) by Jensen's inequality. Moreover H(Q) = E[F_n], because each free cell contributes exactly one fair bit. ∎
+
+So a quadratic lower bound follows as soon as the fair-coin process has a positive density of free cells.
+
+**Numerical evidence** (`randproc.cpp`, `levels.cpp`, 300–2000 runs):
+- E[F_n]/(n²/2) is 0.379 at n = 14 (where E[F] = 37.1 ≤ log₂ a(14) = 42.3), 0.414 at n = 40 and 0.422 at n = 120.
+- The density of free cells per level of the diagonal is stationary at about 0.43 from level 10 up to level 100.
+
+If this persists, it would give c ≥ 2^0.42 ≈ 1.34, against the estimated c ≈ 1.45.
+
+**The process as a one-dimensional automaton.** Fix a level h of the diagonal and let x_g be its value in generation g. Then:
+- cell (g, h) is free exactly when x has a descent at g, that is 0 < x_g ≤ x_{g−1};
+- the next level is x'_g = x_{g−1} + σ_g·x_g, with independent coins σ_g at the descents and σ_g = + elsewhere.
+
+With ratios r_g = x_g/x_{g−1}, u = r_{g−1} and v = r_g, the next level has a descent at g exactly when:
+
+| (σ_{g−1}, σ_g) | condition |
+|---|---|
+| (+,+) | uv ≤ 1 |
+| (+,−) | always |
+| (−,+) | u(2+v) ≤ 1 |
+| (−,−) | u(2−v) ≤ 1 |
+
+Here σ = − is only possible at descents (r ≤ 1). Consequences, proved:
+- every descent survives at the same position with probability at least 1/2;
+- it survives with probability 1 when its left neighbour is a deep descent (u ≤ 1/3);
+- an ascent becomes a descent when its left neighbour is deep enough.
+
+**Open (the missing step).** Prove that descents are created at a rate matching their losses, so that the density stays above some δ > 0 at every level. Since the descent density equals the free-cell density, this would prove a(n) ≥ 2^(δn²/2) and settle the quadratic growth order. The natural tools are a potential function or a comparison with a supercritical branching process. The obstacle is that frozen ascending regions (uv > 1 with r > 1) are stable, so creation has to come from deep descents spreading into their neighbours.
+
 ## Files
 
 | file | description |
@@ -124,3 +162,6 @@ Here F₁(n) grows like n^(5/3) up to a logarithmic factor. The heuristic for de
 | `verify_family.py`, `verify_family2.py` | exhaustive and random verification of the family |
 | `smc2.cpp` | sequential Monte Carlo estimator of ln a(n) |
 | `stats.cpp` | full enumeration with free-cell statistics |
+| `lowerbound_tm.py` | certified family with Thue–Morse compensation of depth k |
+| `randproc.cpp`, `levels.cpp`, `implic.cpp` | fair-coin process: E[F_n], density per level, local implications (Section 5) |
+| `childratio.cpp` | test of the (false) local inequality for extension counts |

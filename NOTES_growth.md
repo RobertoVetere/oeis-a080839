@@ -160,6 +160,12 @@ Here σ = − is only possible at descents (r ≤ 1). Consequences, proved:
   - from a half-frozen start, the density in the frozen half rises from 0 to 0.17 over 4000 levels, so activity spreads into frozen regions.
 - *No static gadgets.* No periodic pattern of fixed rules (forced "+", forced "−", coin) with period up to 7 keeps the coin cells free under independent coins (`gadget.py`, `gadget_sim2.cpp`). Patterns with the same coin in every period survive, through an exact conservation of the period product, but they carry only one bit per level. In log scale each coin leaves a dipole in the log-ratio field, which drifts to the right and accumulates like a random walk.
 
+**Walker form and a controlled rule.** Give one walker per diagonal, W_k = log x. A walker that is behind its right neighbour jumps to just above it; a walker that is level with or ahead of its neighbour gets a coin and either advances slightly or drops back. Free cells are exactly the walkers that are not behind.
+
+Consider the controlled rule "coin only at the first descent of each run of descents, '+' at the other descents". Every descent inside a run except the leftmost survives deterministically, since (+,+) between two descents gives uv <= 1. Each run therefore loses at most one position per level.
+
+In simulation (`runs.cpp`) this rule keeps 0.23 coins per position and level, stable over 4000 levels. The rule has its own absorbing state, the all-equal sequence (one giant run, doubling), so a proof would still need to show that runs do not merge into a single run. This is again a survival statement.
+
 **Suggested route.** A block (renormalization) comparison with oriented percolation, which is the standard technique for proving survival in absorbing-state systems, or an adaptive controller. Information in the automaton flows only to the right, at speed 1, which suits the oriented setting.
 
 ## Files
@@ -174,4 +180,4 @@ Here σ = − is only possible at descents (r ≤ 1). Consequences, proved:
 | `lowerbound_tm.py` | certified family with Thue–Morse compensation of depth k |
 | `randproc.cpp`, `levels.cpp`, `implic.cpp` | fair-coin process: E[F_n], density per level, local implications (Section 5) |
 | `childratio.cpp` | test of the (false) local inequality for extension counts |
-| `potential_lp.py`, `pca.cpp`, `gadget.py`, `gadget_sim2.cpp` | potential search, invasion simulations, static-gadget search (Section 5) |
+| `potential_lp.py`, `pca.cpp`, `gadget.py`, `gadget_sim2.cpp`, `runs.cpp` | potential search, invasion simulations, static-gadget search (Section 5) |
